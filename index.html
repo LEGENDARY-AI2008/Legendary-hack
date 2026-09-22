@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Legend Key Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        .container { width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; }
+        input, button { padding: 10px; margin: 5px; width: 80%; }
+        button { cursor: pointer; background-color: #28a745; color: white; border: none; }
+        #result { margin-top: 20px; font-weight: bold; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Legend Key System</h1>
+        <button onclick="generateKey()">Generate New Key</button>
+        <h2>Verify Key</h2>
+        <input type="text" id="verifyInput" placeholder="Enter Key here...">
+        <button onclick="verifyKey()">Check Key</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function generateKey() {
+            const res = await fetch('/generate', { method: 'POST' });
+            const data = await res.json();
+            document.getElementById('result').innerText = "Generated Key: " + data.key;
+        }
+
+        async function verifyKey() {
+            const key = document.getElementById('verifyInput').value;
+            const res = await fetch('/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: key })
+            });
+            const data = await res.json();
+            document.getElementById('result').innerText = data.message;
+            if(data.status === 'valid') document.getElementById('result').style.color = 'green';
+            else document.getElementById('result').style.color = 'red';
+        }
+    </script>
+</body>
+</html>
